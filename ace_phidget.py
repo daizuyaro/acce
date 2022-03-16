@@ -22,6 +22,7 @@ def onAccelerationChange(self, acceleration, timestamp):
             z_dir.append(ace[i][2]) # offset gravity 1g
             z = z_dir
 
+
     elif len(ace) > 128:
         ace = []
         x_dir = []
