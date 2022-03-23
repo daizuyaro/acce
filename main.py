@@ -6,9 +6,6 @@
 # グラフ描写用
 #import graph
 
-
-
-
 import sys
 from PySide6.QtWidgets import *
 from PySide6.QtCore import *
@@ -34,7 +31,7 @@ import time
 
 # 以下自作ライブラリ
 import temp_phidget
-import ace_phidget
+import ace_calcu
 import rpm_mcp3008
 
 file_path_all = "c://temp//a.csv"
@@ -84,6 +81,12 @@ class MyWindow(QDialog):
         self.label_rpm_ch1 = QLabel("回転数(1ch)")
 
 
+        self.label_ace_x_ch0 = QLabel("加速度(0ch x)")
+        self.label_ace_x_ch1 = QLabel("加速度(1ch x)")
+        self.label_ace_x_ch2 = QLabel("加速度(2ch x)")
+        self.label_ace_x_ch3 = QLabel("加速度(3ch x)")
+        self.label_ace_x_ch4 = QLabel("加速度(4ch x)")
+
         self.label_ace_y_ch0 = QLabel("加速度(0ch y)")
         self.label_ace_y_ch1 = QLabel("加速度(1ch y)")
         self.label_ace_y_ch2 = QLabel("加速度(2ch y)")
@@ -106,17 +109,23 @@ class MyWindow(QDialog):
         layout.addWidget(self.label_rpm_ch0, 4, 0)
         layout.addWidget(self.label_rpm_ch1, 5, 0)
 
-        layout.addWidget(self.label_ace_y_ch0, 1, 2)
-        layout.addWidget(self.label_ace_y_ch1, 2, 2)
-        layout.addWidget(self.label_ace_y_ch2, 3, 2)
-        layout.addWidget(self.label_ace_y_ch3, 4, 2)
-        layout.addWidget(self.label_ace_y_ch4, 5, 2)
+        layout.addWidget(self.label_ace_x_ch0, 1, 2)
+        layout.addWidget(self.label_ace_x_ch1, 2, 2)
+        layout.addWidget(self.label_ace_x_ch2, 3, 2)
+        layout.addWidget(self.label_ace_x_ch3, 4, 2)
+        layout.addWidget(self.label_ace_x_ch4, 5, 2)
 
-        layout.addWidget(self.label_ace_z_ch0, 1, 4)
-        layout.addWidget(self.label_ace_z_ch1, 2, 4)
-        layout.addWidget(self.label_ace_z_ch2, 3, 4)
-        layout.addWidget(self.label_ace_z_ch3, 4, 4)
-        layout.addWidget(self.label_ace_z_ch4, 5, 4)
+        layout.addWidget(self.label_ace_y_ch0, 1, 4)
+        layout.addWidget(self.label_ace_y_ch1, 2, 4)
+        layout.addWidget(self.label_ace_y_ch2, 3, 4)
+        layout.addWidget(self.label_ace_y_ch3, 4, 4)
+        layout.addWidget(self.label_ace_y_ch4, 5, 4)
+
+        layout.addWidget(self.label_ace_z_ch0, 1, 6)
+        layout.addWidget(self.label_ace_z_ch1, 2, 6)
+        layout.addWidget(self.label_ace_z_ch2, 3, 6)
+        layout.addWidget(self.label_ace_z_ch3, 4, 6)
+        layout.addWidget(self.label_ace_z_ch4, 5, 6)
 
 
         # label for results(temp, rpm and acceralation)
@@ -127,6 +136,11 @@ class MyWindow(QDialog):
         self.label_rpm_ch0_l = QLabel(self)
         self.label_rpm_ch1_l = QLabel(self)
 
+        self.label_ace_x_ch0_l = QLabel(self)
+        self.label_ace_x_ch1_l = QLabel(self)
+        self.label_ace_x_ch2_l = QLabel(self)
+        self.label_ace_x_ch3_l = QLabel(self)
+        self.label_ace_x_ch4_l = QLabel(self)
 
         self.label_ace_y_ch0_l = QLabel(self)
         self.label_ace_y_ch1_l = QLabel(self)
@@ -150,17 +164,23 @@ class MyWindow(QDialog):
         layout.addWidget(self.label_rpm_ch0_l, 4, 1)
         layout.addWidget(self.label_rpm_ch1_l, 5, 1)
 
-        layout.addWidget(self.label_ace_y_ch0_l, 1, 3)
-        layout.addWidget(self.label_ace_y_ch1_l, 2, 3)
-        layout.addWidget(self.label_ace_y_ch2_l, 3, 3)
-        layout.addWidget(self.label_ace_y_ch3_l, 4, 3)
-        layout.addWidget(self.label_ace_y_ch4_l, 5, 3)
+        layout.addWidget(self.label_ace_x_ch0_l, 1, 3)
+        layout.addWidget(self.label_ace_x_ch1_l, 2, 3)
+        layout.addWidget(self.label_ace_x_ch2_l, 3, 3)
+        layout.addWidget(self.label_ace_x_ch3_l, 4, 3)
+        layout.addWidget(self.label_ace_x_ch4_l, 5, 3)
 
-        layout.addWidget(self.label_ace_z_ch0_l, 1, 5)
-        layout.addWidget(self.label_ace_z_ch1_l, 2, 5)
-        layout.addWidget(self.label_ace_z_ch2_l, 3, 5)
-        layout.addWidget(self.label_ace_z_ch3_l, 4, 5)
-        layout.addWidget(self.label_ace_z_ch4_l, 5, 5)
+        layout.addWidget(self.label_ace_y_ch0_l, 1, 5)
+        layout.addWidget(self.label_ace_y_ch1_l, 2, 5)
+        layout.addWidget(self.label_ace_y_ch2_l, 3, 5)
+        layout.addWidget(self.label_ace_y_ch3_l, 4, 5)
+        layout.addWidget(self.label_ace_y_ch4_l, 5, 5)
+
+        layout.addWidget(self.label_ace_z_ch0_l, 1, 7)
+        layout.addWidget(self.label_ace_z_ch1_l, 2, 7)
+        layout.addWidget(self.label_ace_z_ch2_l, 3, 7)
+        layout.addWidget(self.label_ace_z_ch3_l, 4, 7)
+        layout.addWidget(self.label_ace_z_ch4_l, 5, 7)
 
         self.setLayout(layout)
 
@@ -177,28 +197,37 @@ class MyWindow(QDialog):
         self.label_rpm_ch1_l.setText("{}".format(xxx))
 
     def label_connect_5(self, xxx):
-        self.label_ace_y_ch0_l.setText("{}".format(xxx))
+        self.label_ace_x_ch0_l.setText("{}".format(xxx))
     def label_connect_6(self, xxx):
-        self.label_ace_y_ch1_l.setText("{}".format(xxx))
+        self.label_ace_x_ch1_l.setText("{}".format(xxx))
     def label_connect_7(self, xxx):
-        self.label_ace_y_ch2_l.setText("{}".format(xxx))
+        self.label_ace_x_ch2_l.setText("{}".format(xxx))
     def label_connect_8(self, xxx):
-        self.label_ace_y_ch3_l.setText("{}".format(xxx))
+        self.label_ace_x_ch3_l.setText("{}".format(xxx))
     def label_connect_9(self, xxx):
-        self.label_ace_y_ch4_l.setText("{}".format(xxx))
+        self.label_ace_x_ch4_l.setText("{}".format(xxx))
 
     def label_connect_10(self, xxx):
-        self.label_ace_z_ch0_l.setText("{}".format(xxx))
+        self.label_ace_y_ch0_l.setText("{}".format(xxx))
     def label_connect_11(self, xxx):
-        self.label_ace_z_ch1_l.setText("{}".format(xxx))
+        self.label_ace_y_ch1_l.setText("{}".format(xxx))
     def label_connect_12(self, xxx):
-        self.label_ace_z_ch2_l.setText("{}".format(xxx))
+        self.label_ace_y_ch2_l.setText("{}".format(xxx))
     def label_connect_13(self, xxx):
-        self.label_ace_z_ch3_l.setText("{}".format(xxx))
+        self.label_ace_y_ch3_l.setText("{}".format(xxx))
     def label_connect_14(self, xxx):
-        self.label_ace_z_ch4_l.setText("{}".format(xxx))
+        self.label_ace_y_ch4_l.setText("{}".format(xxx))
+
     def label_connect_15(self, xxx):
-        self.label_ace_z_ch5_l.setText("{}".format(xxx))
+        self.label_ace_z_ch0_l.setText("{}".format(xxx))
+    def label_connect_16(self, xxx):
+        self.label_ace_z_ch1_l.setText("{}".format(xxx))
+    def label_connect_17(self, xxx):
+        self.label_ace_z_ch2_l.setText("{}".format(xxx))
+    def label_connect_18(self, xxx):
+        self.label_ace_z_ch3_l.setText("{}".format(xxx))
+    def label_connect_19(self, xxx):
+        self.label_ace_z_ch4_l.setText("{}".format(xxx))
 
 
     def loop(self):
@@ -220,6 +249,10 @@ class MyWindow(QDialog):
             signal_13 = Signal(str)
             signal_14 = Signal(str)
             signal_15 = Signal(str)
+            signal_16 = Signal(str)
+            signal_17 = Signal(str)
+            signal_18 = Signal(str)
+            signal_19 = Signal(str)
 
             def run(self):
 
@@ -242,7 +275,7 @@ class MyWindow(QDialog):
                             pass
 
                     # rpm
-                    ch = [bytes([0x01,0x90,0x00]), bytes([0x01,0x90,0x00])]
+                    ch = [bytes([0x01,0x80,0x00]), bytes([0x01,0x90,0x00])] ##訂正しろ
                     list_rpm = []
                     for i in ch:
                         value = rpm_mcp3008.rpm_mcp3008(i)
@@ -254,30 +287,29 @@ class MyWindow(QDialog):
                             pass
 
                     # acceralation
-                    ch = [0] #,1,2,3,4]
+                    port = [0,1,2] #,3,4]
                     list_ace = []
-                    for i in ch:
-                        value = ace_phidget.ace_phidget(i)
-                        list_ace.append(value)
-                        list_ace = list_ace[0]
-                        if len(list_ace) == 2:
+                    for port in port:
 
-                            self.signal_5.emit(str(list_ace[0]))
-                            #self.signal_6.emit(str(list_ace[2]))
-                            #self.signal_7.emit(str(list_ace[4]))
-                            #self.signal_8.emit(str(list_ace[6]))
-                            #self.signal_9.emit(str(list_ace[8]))
+                        value = ace_calcu.ace(port)
 
-                            self.signal_10.emit(str(list_ace[1]))
-                            #self.signal_11.emit(str(list_ace[3]))
-                            #self.signal_12.emit(str(list_ace[5]))
-                            #self.signal_13.emit(str(list_ace[7]))
-                            #self.signal_14.emit(str(list_ace[9]))
-                        else:
-                            pass
+                        if port == 0:
+                            self.signal_5.emit(str(value[0]))
+                            self.signal_10.emit(str(value[1]))
+                            self.signal_15.emit(str(value[2]))
 
+                        elif port == 1:
+                            self.signal_6.emit(str(value[0]))
+                            self.signal_11.emit(str(value[1]))
+                            self.signal_16.emit(str(value[2]))
 
-                    # time elapsed
+                        elif port == 2:
+                            self.signal_7.emit(str(value[0]))
+                            self.signal_12.emit(str(value[1]))
+                            self.signal_17.emit(str(value[2]))
+                        pass
+
+                # time elapsed
                     self.current = datetime.datetime.now()
                     self.cuurent = self.current.strftime('%H:%M:%S')
                     self.elapsed = str(self.current - start)
@@ -321,6 +353,11 @@ class MyWindow(QDialog):
         thread.signal_12.connect(self.label_connect_12)
         thread.signal_13.connect(self.label_connect_13)
         thread.signal_14.connect(self.label_connect_14)
+        thread.signal_15.connect(self.label_connect_15)
+        thread.signal_16.connect(self.label_connect_16)
+        thread.signal_17.connect(self.label_connect_17)
+        thread.signal_18.connect(self.label_connect_18)
+        thread.signal_19.connect(self.label_connect_19)
         thread.start()
 
 

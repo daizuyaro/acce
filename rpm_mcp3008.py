@@ -43,8 +43,6 @@ def rpm_mcp3008(ch):
         data = ((read_buf[1]&3) << 8) + read_buf[2]
         start = time.perf_counter()
 
-        print(data)
-
         if start <= end:
             if data < 50:
                 cycle += 1
