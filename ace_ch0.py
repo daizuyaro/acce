@@ -19,8 +19,9 @@ import matplotlib.pyplot as plt
 import ace_phidget
 
 result = []
+result1 = []
 
-filepath_csv = "c://a//ace.csv"
+file_path = "c://temp//a.csv"
 
 samp_int = 0.01 # nr of sampling 10[ms] = 0.01[s]
 srt_time = 0 # star time
@@ -45,16 +46,15 @@ def data(port):
 
     acceleration = ace_phidget.main(port)
 
-    for i in [0,1,2]: #x=0, y=1, z=2
+    for i in [0, 1, 2]: #x=0, y=1, z=2
 
         dir = acceleration[i] # dir = direction
         dir = [n * 9.80665 for n in dir] # g-force -> acceleration 1g = 9.8m/s*2 unit: m/s**2
 
-        if i == 0: # x
-            x_ace = lpf(dir)
-            print(x_ace)
+        if i == 0: # x=[acceleration, velocity, displacement]
+            x_ace = hpf(dir)
             x_ace = min_max(x_ace)
-            print(x_ace)
+            x_ace = [round(n, 1) for n in x_ace]
             result.append(list(x_ace)) # unit: m/s**2
 
             x_vel = [n * 1/100 for n in dir] # velocity = a*t [m/ms -> m/s] integral period: 0-10ms(1/100s)
@@ -62,17 +62,20 @@ def data(port):
             x_vel = hpf(x_vel)
             x_vel = min_max(x_vel)
             x_vel = [n * unt_conv for n in x_vel] # m -> mm
+            x_vel = [round(n, 1) for n in x_vel]
             result.append(list(x_vel)) # unit: mm/s(RMS)
 
             x_dis = [n * 1/2 * (1/100 ** 2) for n in dir] # displacement = 1/2*a*t**2
             x_dis = hpf(x_dis)
             x_dis = min_max(x_dis)
             x_dis = [n * unt_conv for n in x_dis] # m -> mm
-            result.append(list(x_dis)) # unit: mm
+            x_dis = [round(n, 3) for n in x_dis]
+            result.append(list(x_dis)) # unit:
 
-        elif i == 1: # y
-            x_ace = lpf(dir)
+        if i == 1: # y
+            x_ace = hpf(dir)
             x_ace = min_max(x_ace)
+            x_ace = [round(n, 1) for n in x_ace]
             result.append(list(x_ace)) # unit: m/s**2
 
             x_vel = [n * 1/100 for n in dir] # velocity = a*t [m/ms -> m/s] integral period: 0-10ms(1/100s)
@@ -80,17 +83,20 @@ def data(port):
             x_vel = hpf(x_vel)
             x_vel = min_max(x_vel)
             x_vel = [n * unt_conv for n in x_vel] # m -> mm
+            x_vel = [round(n, 1) for n in x_vel]
             result.append(list(x_vel)) # unit: mm/s(RMS)
 
             x_dis = [n * 1/2 * (1/100 ** 2) for n in dir] # displacement = 1/2*a*t**2
             x_dis = hpf(x_dis)
             x_dis = min_max(x_dis)
             x_dis = [n * unt_conv for n in x_dis] # m -> mm
-            result.append(list(x_dis)) # unit: mm
+            x_dis = [round(n, 3) for n in x_dis]
+            result.append(list(x_dis)) # unit:
 
-        elif i == 2: # z
-            x_ace = lpf(dir)
+        if i == 2: # z
+            x_ace = hpf(dir)
             x_ace = min_max(x_ace)
+            x_ace = [round(n, 1) for n in x_ace]
             result.append(list(x_ace)) # unit: m/s**2
 
             x_vel = [n * 1/100 for n in dir] # velocity = a*t [m/ms -> m/s] integral period: 0-10ms(1/100s)
@@ -98,56 +104,43 @@ def data(port):
             x_vel = hpf(x_vel)
             x_vel = min_max(x_vel)
             x_vel = [n * unt_conv for n in x_vel] # m -> mm
+            x_vel = [round(n, 1) for n in x_vel]
             result.append(list(x_vel)) # unit: mm/s(RMS)
 
             x_dis = [n * 1/2 * (1/100 ** 2) for n in dir] # displacement = 1/2*a*t**2
             x_dis = hpf(x_dis)
             x_dis = min_max(x_dis)
             x_dis = [n * unt_conv for n in x_dis] # m -> mm
+            x_dis = [round(n, 3) for n in x_dis]
             result.append(list(x_dis)) # unit: mm
 
-
-            print(result)
-
-
-    #if len(dis_result) == 6:
-     #   displacement = dis_result
-     #   dis_result = []
-     #   return displacement
-
-    #  #logger
-    #if i == 2:
-    #    csv_list = [dsp_min, dsp_max]
-    #    file_path_all = "c:\\a\\dsp.csv"
-    #    f = open(file_path_all, 'a')
-    #    writer = csv.writer(f, lineterminator='\n')
-    #    writer.writerow(csv_list)
-    #    f.close()
-
+        if len(result) == 9:
+            result1 = result
+            return result1
 
 def min_max(data):
     minimum = float(np.abs(min(data)))
     maximum = float(np.abs(max(data)))
-    minimum = round(minimum, 10)
-    maximum = round(maximum, 10)
+    #minimum = round(minimum, 3)
+    #maximum = round(maximum, 3)
     return minimum, maximum
 
 
 def hpf(data):
     # カットオフ周波数決定
     F = np.fft.fft(data) # FFT
-    F_ads = np.abs(F) # for absolute
+    #F_ads = np.abs(F) # for absolute
     # to make axis for data of frequency
     # 周波数変換 周波数軸 linspace(測定開始時間[s],測定終了時間[s]/サンプリング間隔[s](平均サンプリング間隔に変更している),測定数)
     fq = np.linspace(srt_time, end_time/samp_int, len(data))
 
     # グラフ表示（FFT解析結果）
-    plt.xlabel('freqency(Hz)', fontsize=14)
-    plt.ylabel('signal amplitude', fontsize=14)
+    #plt.xlabel('freqency(Hz)', fontsize=14)
+    #plt.ylabel('signal amplitude', fontsize=14)
     # 振幅をもとの信号に揃える
-    F_abs_amp = F_ads / len(data) * 2 # 交流成分はデータ数で割って2倍する
-    F_abs_amp[0] = F_abs_amp[0] / 2 # 直流成分（今回は扱わないけど）は2倍不要
-    plt.plot(fq, F_abs_amp)
+    #F_abs_amp = F_ads / len(data) * 2 # 交流成分はデータ数で割って2倍する
+    #F_abs_amp[0] = F_abs_amp[0] / 2 # 直流成分（今回は扱わないけど）は2倍不要
+    #plt.plot(fq, F_abs_amp)
     #plt.show()
 
     # 周波数でフィルタリング処理 上のplt.showで表示された結果からカットオフ周波数を決定
@@ -157,7 +150,7 @@ def hpf(data):
     # FFTの複素数結果を絶対値に変換
     #F2_abs = np.abs(F)
     # 振幅をもとの信号に揃える
-    #F2_abs_amp = F2_abs / len(data)) * 2 # 交流成分はデータ数で割って2倍
+    #F2_abs_amp = F2_abs / (len(data)) * 2 # 交流成分はデータ数で割って2倍
     #F2_abs_amp[0] = F2_abs_amp[0] / 2 # 直流成分（今回は扱わないけど）は2倍不要
 
     # グラフ表示（FFT解析結果）
@@ -174,18 +167,18 @@ def hpf(data):
 def lpf(data):
     # カットオフ周波数決定
     F = np.fft.fft(data) # FFT
-    F_ads = np.abs(F) # for absolute
+    #F_ads = np.abs(F) # for absolute
     # to make axis for data of frequency
     # 周波数変換 周波数軸 linspace(測定開始時間[s],測定終了時間[s]/サンプリング間隔[s](平均サンプリング間隔に変更している),測定数)
     fq = np.linspace(srt_time, end_time/samp_int, len(data))
 
     # グラフ表示（FFT解析結果）
-    plt.xlabel('freqency(Hz)', fontsize=14)
-    plt.ylabel('signal amplitude', fontsize=14)
+    #plt.xlabel('freqency(Hz)', fontsize=14)
+    #plt.ylabel('signal amplitude', fontsize=14)
     # 振幅をもとの信号に揃える
-    F_abs_amp = F_ads / len(data) * 2 # 交流成分はデータ数で割って2倍する
-    F_abs_amp[0] = F_abs_amp[0] / 2 # 直流成分（今回は扱わないけど）は2倍不要
-    plt.plot(fq, F_abs_amp)
+    #F_abs_amp = F_ads / len(data) * 2 # 交流成分はデータ数で割って2倍する
+    #F_abs_amp[0] = F_abs_amp[0] / 2 # 直流成分（今回は扱わないけど）は2倍不要
+    #plt.plot(fq, F_abs_amp)
     #plt.show()
 
     # 周波数でフィルタリング処理 上のplt.showで表示された結果からカットオフ周波数を決定
@@ -209,5 +202,4 @@ def lpf(data):
 
     return F_ifft_real
 
-port = 0
-data(port)
+#data(0)

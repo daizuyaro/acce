@@ -11,4 +11,5 @@ def temp_phidget(ch):
     #print("Temperature: " + str(temperature))
     temperature = str(temperature)
     temperatureSensor.close()
-    return temperature[0:4]
+    temperature = temperature[0:4]
+    return [float(temperature)]

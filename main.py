@@ -392,6 +392,6 @@ if __name__ == "__main__":
 
     scr_w,scr_h= pag.size() #LCD resolution
 
-    mywindow.setFixedSize(scr_w*0.8, scr_h*0.8)  # windows size based on LCD resolution
+    mywindow.setFixedSize(scr_w*0.4, scr_h*0.4)  # windows size based on LCD resolution
     mywindow.show()
     app.exec_()
